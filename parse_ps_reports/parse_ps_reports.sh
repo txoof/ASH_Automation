@@ -12,7 +12,6 @@ SCRIPT=$( basename "${SCRIPT_PATH}" )
 
 today_marker=$( date +%C%y%m%d )
 year_marker=$( date +%C%y )
-logfile="/var/log/${SCRIPT}.$year_marker.log"
 
 #
 # ------------------------------------------------------------------------------------------------------------------------
@@ -24,28 +23,27 @@ logfile="/var/log/${SCRIPT}.$year_marker.log"
 # ------------------------------------------------------------------------------------------------------------------------
 #
 
-
-current_user=$( stat -f '%Su' /dev/console )
+current_user="sismailer"
 home=$( eval echo ~$current_user )
 
-test_location="${home}/Desktop/csv_dummies"
 
-sftp_location="${home}/Desktop/csv_dummies"
+# Default logging locations
+#
+logfolder="${home}/sis_log"
+logfile="${logfolder}/${SCRIPT}.$today_marker.log"
 
-default_body_location="${home}/Desktop/default_body_location"
+# Default sftp location for Powerschool
+#
+sftp_location="${home}/sis_incoming"
 
-tmp_location="/private/tmp"
+# Default attachement
+#
+body_text_location="${home}/sis_textbody"
 
-test_msg="The quick brown fox jumps over the lazy dog"
+# Default text body allways used
+#
+default_body_text="${body_text_location}/default_body.txt"
 
-CSV_Check_list=(
-	"yellow:YES"
-	"green:YES"
-	"brown:YES"
-	"black:YES"
-	"red:YES"
-	"orange:YES"
-)
 
 
 #
@@ -66,7 +64,7 @@ message_Log ()
 
     # Header string function
     fHeader () { echo $(fDateTime) - $Title; }
- #	echo $(fHeader) "$message" >> "$logfile"
+ 	echo $(fHeader) "$message" >> "$logfile"
  	echo $(fHeader) "$message" 
 }
 
@@ -92,6 +90,8 @@ function Create_Dummy()
 #
 function parse_ps_reports()
 {	
+	tmp_location=$( /usr/bin/mktemp -d $DOWNLOAD_DESTINATION/parse_ps_reports.XXXX )
+	
 	array_csv=( ${sftp_location}/*.csv )
 	
 	for csv_file in $array_csv
@@ -106,15 +106,32 @@ function parse_ps_reports()
 		
 		message_Log "Create the email body"
 
-		if [[ -d "${default_body_location}/${Info_Body}" ]]; 
+		if [[ -e "${default_body_text}" ]]; 
+		then
+			message_Log "Append the default text text to this message"
+			
+			echo " " >>"${tmp_location}/${default_body_text}"
+			
+			cat "${default_body_text}" >>"${tmp_location}/${email_Body}"
+			
+			echo " " >>"${tmp_location}/${email_Body}"
+		fi
+
+		if [[ -d "${body_text_location}/${Info_Body}" ]]; 
 		then
 			message_Log "Append the info text to this message"
+			
 			echo " " >>"${tmp_location}/${email_Body}"
+			
 			cat "${default_body_location}/${Info_Body}" >>"${tmp_location}/${email_Body}"
+			
 			echo " " >>"${tmp_location}/${email_Body}"
 		else
+			
 			echo " " >>"${tmp_location}/${email_Body}"
+			
 			echo "Please check the attached report ${File_name}" >"${tmp_location}/${email_Body}"
+			
 			echo " " >>"${tmp_location}/${email_Body}"
 		fi
 		
@@ -130,6 +147,8 @@ function parse_ps_reports()
 		
 		cat "${tmp_location}/${email_Body}" | mail -s "${name}" "${email_address}"
 	done
+	
+	rm -rfd "${tmp_location}"
 }
 
 
@@ -137,16 +156,11 @@ function parse_ps_reports()
 # ----------------------------------------------------------------------------------------------
 #
 message_Log " "
+message_Log "Make SIS incoming folder"
 
-message_Log "Create ${test_location}"
-
-mkdir -p "${test_location}"
-
-message_Log " "
-
-message_Log "Create test files"
-
-Create_Dummy
+mkdir -p "${logfolder}"
+mkdir -p "${sftp_location}"
+mkdir -p "${body_text_location}"
 
 message_Log " "
 
