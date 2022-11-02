@@ -90,7 +90,7 @@ function Create_Dummy()
 #
 function parse_ps_reports()
 {	
-	tmp_location=$( /usr/bin/mktemp -d $DOWNLOAD_DESTINATION/parse_ps_reports.XXXX )
+	tmp_location=$( /usr/bin/mktemp -d $home/parse_ps_reports.XXXX )
 	
 	array_csv=( ${sftp_location}/*.csv )
 	
@@ -98,8 +98,16 @@ function parse_ps_reports()
 	do
 		name=$( basename $csv_file .csv )
 		base_address=$( echo "${name}" | cut -d "-" -f 1 )
+		
+		#
+		# is formatted ....
+		#
 		email_address="${base_address}_SIS_Reports@ash.nl"
-		File_name=$( echo "${name}" | cut -d "-" -f 3 )
+		
+		#
+		File_name=$( echo "${name}" | awk -F"-_-" '{print $2}' )
+		
+		# 
 		email_Body="Body_${File_name}.txt"
 		Attachment="Attachment_${File_name}.txt"
 		Info_Body="Info_${File_name}.txt"
@@ -117,7 +125,7 @@ function parse_ps_reports()
 			echo " " >>"${tmp_location}/${email_Body}"
 		fi
 
-		if [[ -d "${body_text_location}/${Info_Body}" ]]; 
+		if [[ -e "${body_text_location}/${Info_Body}" ]]; 
 		then
 			message_Log "Append the info text to this message"
 			
@@ -137,6 +145,7 @@ function parse_ps_reports()
 		
 		message_Log "Create the attachment ${Attachment}"
 		uuencode "${csv_file}"  "${tmp_location}/Attachment_${File_name}.csv" >"${tmp_location}/${Attachment}"
+		
 		message_Log "Append the attachment to this message"
 		cat "${tmp_location}/${Attachment}" >>"${tmp_location}/${email_Body}"
 		
@@ -155,8 +164,9 @@ function parse_ps_reports()
 #
 # ----------------------------------------------------------------------------------------------
 #
+
 message_Log " "
-message_Log "Make SIS incoming folder"
+message_Log "Make SIS support folders"
 
 mkdir -p "${logfolder}"
 mkdir -p "${sftp_location}"
@@ -170,5 +180,8 @@ parse_ps_reports
 
 message_Log " "
 
+#
+# ----------------------------------------------------------------------------------------------
+#
 
 exit 0
