@@ -145,6 +145,7 @@ function parse_ps_reports()
 		
 		message_Log "Create the attachment ${Attachment}"
 		uuencode "${csv_file}"  "${tmp_location}/Attachment_${File_name}.csv" >"${tmp_location}/${Attachment}"
+		
 		message_Log "Append the attachment to this message"
 		cat "${tmp_location}/${Attachment}" >>"${tmp_location}/${email_Body}"
 		
@@ -163,8 +164,9 @@ function parse_ps_reports()
 #
 # ----------------------------------------------------------------------------------------------
 #
+
 message_Log " "
-message_Log "Make SIS incoming folder"
+message_Log "Make SIS support folders"
 
 mkdir -p "${logfolder}"
 mkdir -p "${sftp_location}"
