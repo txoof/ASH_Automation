@@ -90,7 +90,7 @@ function Create_Dummy()
 #
 function parse_ps_reports()
 {	
-	tmp_location=$( /usr/bin/mktemp -d $DOWNLOAD_DESTINATION/parse_ps_reports.XXXX )
+	tmp_location=$( /usr/bin/mktemp -d $home/parse_ps_reports.XXXX )
 	
 	array_csv=( ${sftp_location}/*.csv )
 	
