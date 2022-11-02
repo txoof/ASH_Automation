@@ -170,6 +170,10 @@ mkdir -p "${logfolder}"
 mkdir -p "${sftp_location}"
 mkdir -p "${body_text_location}"
 
+#
+# ----------------------------------------------------------------------------------------------
+#
+
 message_Log " "
 
 message_Log "parse_ps_reports"
@@ -178,5 +182,8 @@ parse_ps_reports
 
 message_Log " "
 
+#
+# ----------------------------------------------------------------------------------------------
+#
 
 exit 0
