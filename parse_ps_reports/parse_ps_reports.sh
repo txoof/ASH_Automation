@@ -35,7 +35,7 @@ current_user="sismailer"
 home=$HOME
 
 
-# Default logging locations
+# Default logging locationtemporary files" s
 #
 logfolder="${home}/sis_log"
 logfile="${logfolder}/${SCRIPT}.$today_marker.log"
@@ -141,6 +141,7 @@ function parse_ps_reports()
 			echo " " >>"${tmp_location}/${email_Body}"
 		fi
 
+		message_Log "Checking for additional body text in $body_text_location/$Info_Body"
 		if [[ -e "${body_text_location}/${Info_Body}" ]]; 
 		then
 			message_Log "Append the info text to this message"
@@ -152,7 +153,7 @@ function parse_ps_reports()
 			
 			echo " " >>"${tmp_location}/${email_Body}"
 		else
-			message_Log "No additional Info_body found"
+			message_Log "No additional body text found"
 
 			echo " " >>"${tmp_location}/${email_Body}"
 			
