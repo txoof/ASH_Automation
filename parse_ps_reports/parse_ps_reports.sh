@@ -52,6 +52,8 @@ body_text_location="${home}/sis_textbody"
 #
 default_body_text="${body_text_location}/default_body.txt"
 
+report_archive="$home/old_reports"
+
 
 
 #
@@ -172,8 +174,14 @@ function parse_ps_reports()
 		message_Log "${tmp_location}/${email_Body} | mail -s ${name} ${email_address}"
 		
 		cat "${tmp_location}/${email_Body}" | mail -s "${name}" "${email_address}"
+
+		# archive reports
+		message_Log "Archiving report $csv_file in $report_archive"
+
+		mv $csv_file $report_archive 
 	done
 	
+	message_Log "Cleaning up temporary files" 
 	rm -rfd "${tmp_location}"
 }
 
