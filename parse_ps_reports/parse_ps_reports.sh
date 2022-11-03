@@ -10,6 +10,7 @@ parent_dir=$( /usr/bin/dirname "$0" )
 SCRIPT_PATH="${0}"
 SCRIPT=$( basename "${SCRIPT_PATH}" )
 
+
 today_marker=$( date +%C%y%m%d )
 year_marker=$( date +%C%y )
 
@@ -22,6 +23,12 @@ year_marker=$( date +%C%y )
 #
 # ------------------------------------------------------------------------------------------------------------------------
 #
+## configuration
+
+# the `email_group_suffix` will be used whenever forwarding reports 
+# see `Email Setup` in README.md
+email_group_suffix="_sis_reports@ash.nl"
+
 
 current_user="sismailer"
 home=$( eval echo ~$current_user )
@@ -74,7 +81,7 @@ message_Log ()
 function Create_Dummy()
 {
 	for csv_file in "${CSV_Check_list[@]}"; do
-	
+		
 		ARRAY=("${(@s/:/)csv_file}")
 		Test_file="$ARRAY[1]"
 		email="$ARRAY[2]"
@@ -102,7 +109,8 @@ function parse_ps_reports()
 		#
 		# is formatted ....
 		#
-		email_address="${base_address}_SIS_Reports@ash.nl"
+		#email_address="${base_address}_SIS_Reports@ash.nl"
+		email_address="${base_address}$email_group_suffix"
 		
 		#
 		File_name=$( echo "${name}" | awk -F"-_-" '{print $2}' )
