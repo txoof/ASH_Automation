@@ -31,7 +31,8 @@ email_group_suffix="_sis_reports@ash.nl"
 
 
 current_user="sismailer"
-home=$( eval echo ~$current_user )
+#home=$( eval echo ~$current_user )
+home=$HOME
 
 
 # Default logging locations
@@ -98,7 +99,10 @@ function Create_Dummy()
 function parse_ps_reports()
 {	
 	mk_tmp=$(which mktemp)
-	tmp_location=$( $mk_tmp  -d $home/parse_ps_reports.XXXX )
+	#tmp_location=$( $mk_tmp -d $home/parse_ps_reports.XXXX )
+	tmp_location=$( $mk_tmp -d )
+	
+	message_Log "Create temp directory: $tmp_location"
 	
 	array_csv=( ${sftp_location}/*.csv )
 	
@@ -110,24 +114,25 @@ function parse_ps_reports()
 		#
 		# is formatted ....
 		#
-		#email_address="${base_address}_SIS_Reports@ash.nl"
 		email_address="${base_address}$email_group_suffix"
 		
 		#
 		File_name=$( echo "${name}" | awk -F"-_-" '{print $2}' )
 		
+		
 		# 
 		email_Body="Body_${File_name}.txt"
-		Attachment="Attachment_${File_name}.txt"
-		Info_Body="Info_${File_name}.txt"
+		Attachment="Attachment_${File_name}.csv"
+		# append this text to every outgoing email that matches the base address
+		Info_Body="${base_address}.txt"
 		
 		message_Log "Create the email body"
 
 		if [[ -e "${default_body_text}" ]]; 
 		then
-			message_Log "Append the default text text to this message"
+			message_Log "Append the default text to this message"
 			
-			echo " " >>"${tmp_location}/${default_body_text}"
+			echo " " >>"${tmp_location}/${email_Body}"
 			
 			cat "${default_body_text}" >>"${tmp_location}/${email_Body}"
 			
@@ -137,28 +142,31 @@ function parse_ps_reports()
 		if [[ -e "${body_text_location}/${Info_Body}" ]]; 
 		then
 			message_Log "Append the info text to this message"
+			message_Log "$Info_Body"
 			
 			echo " " >>"${tmp_location}/${email_Body}"
 			
-			cat "${default_body_location}/${Info_Body}" >>"${tmp_location}/${email_Body}"
+			cat "${body_text_location}/${Info_Body}" >>"${tmp_location}/${email_Body}"
 			
 			echo " " >>"${tmp_location}/${email_Body}"
 		else
-			
+			message_Log "No additional Info_body found"
+
 			echo " " >>"${tmp_location}/${email_Body}"
 			
-			echo "Please check the attached report ${File_name}" >"${tmp_location}/${email_Body}"
+			echo "Please check the attached report ${File_name}" >>"${tmp_location}/${email_Body}"
 			
 			echo " " >>"${tmp_location}/${email_Body}"
 		fi
 		
 		message_Log "Create the attachment ${Attachment}"
-		uuencode "${csv_file}"  "${tmp_location}/Attachment_${File_name}.csv" >"${tmp_location}/${Attachment}"
+		uuencode "${csv_file}"  "${tmp_location}/Attachment_${File_name}.csv" >>"${tmp_location}/${Attachment}"
 		
 		message_Log "Append the attachment to this message"
 		cat "${tmp_location}/${Attachment}" >>"${tmp_location}/${email_Body}"
 		
-		email_address="jkalkman@ash.nl"
+		#email_address="jkalkman@ash.nl"
+		#email_address="aciuffo@ash.nl"
 		
 		message_Log "Send message to ${email_address}"
 		message_Log "${tmp_location}/${email_Body} | mail -s ${name} ${email_address}"
