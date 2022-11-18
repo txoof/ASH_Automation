@@ -4,7 +4,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		description="BASE PLUGIN Template -- update this in plugin.xml"
 		name="BASE PLUGIN Template"
-		version="0.0.7.99991334"
+		version="0.0.20221116"
 		xsi:schemaLocation="http://plugin.powerschool.pearson.com plugin.xsd">
 		
 	<publisher name="Your/Org Name">
