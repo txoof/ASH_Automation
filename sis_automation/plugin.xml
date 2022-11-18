@@ -4,7 +4,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		description="Automated report Output from PowerSchool See https://github.com/txoof/ASH_Automation"
 		name="ASH Automation"
-		version="0.5.20221117"
+		version="0.6.20221118"
 		xsi:schemaLocation="http://plugin.powerschool.pearson.com plugin.xsd">
 		
 	<publisher name="Aaron Ciuffo on behalf of ASH">
