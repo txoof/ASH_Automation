@@ -267,7 +267,7 @@ function parse_ps_reports_sendmail()
 				message_Log "Append the info text to this message - ${Info_Body}"
 
 				echo " " >>"${tmp_location}/${email_Body}"
-                                echo "--------------------------------------------------------" >>"${tmp_location}/${email_Body}"
+                                echo "----------------------------------------------------------------------------------------------------------------" >>"${tmp_location}/${email_Body}"
                                 echo " " >>"${tmp_location}/${email_Body}"
 
 				cat "${default_body_location}/${Info_Body}" >>"${tmp_location}/${email_Body}"
@@ -289,7 +289,7 @@ function parse_ps_reports_sendmail()
                                 message_Log "Append the default text text to this message  - ${default_body_text}"
 
                                 echo " " >>"${tmp_location}/${email_Body}"
-                                echo "--------------------------------------------------------" >>"${tmp_location}/${email_Body}"
+                                echo "----------------------------------------------------------------------------------------------------------------" >>"${tmp_location}/${email_Body}"
                                 echo " " >>"${tmp_location}/${email_Body}"
 
                                 cat "${default_body_text}" >>"${tmp_location}/${email_Body}"
@@ -297,7 +297,7 @@ function parse_ps_reports_sendmail()
                                 echo " " >>"${tmp_location}/${email_Body}"
                         fi
 
-                        echo "--------------------------------------------------------" >>"${tmp_location}/${email_Body}"
+                        echo "----------------------------------------------------------------------------------------------------------------" >>"${tmp_location}/${email_Body}"
                         echo " " >>"${tmp_location}/${email_Body}"
 
 			message_Log "Building message to ${email_address}"
