@@ -1,0 +1,5 @@
+This email and the attached CSV was as sent by sismailer@pkg.ash.nl.
+
+Full documentation for this can be found at https://github.com/txoof/ASH_Automation/blob/main/README.md
+
+You are receiving this email because you are a member of the google group listed in the "To" field above. If you wish to adjust your group settings (e.g. email frequency) visit https://groups.google.com. To add additional members or change the membership, please contact the manager of this group or IT Support. You can find the managers of the group under the "People > Members" tab at https://groups.google.com.
