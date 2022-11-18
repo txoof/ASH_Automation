@@ -1,0 +1,96 @@
+<queries>
+    <!--set name here (also applies to permissions_root-->
+    <query name="com.txoof.ashautomation.newstudents" coreTable="students" flattened="false">
+        <!--add description here-->
+        <description>new students</description>
+        <!--number of columns here must match number sql returns-->
+        <columns>
+            <column column="STUDENTS.ID">dcid</column> <!-- for columns not in database use a core filed-->
+            <column column="STUDENTS.ID">student_number</column>
+            <column column="STUDENTS.ID">districtentrydate</column>
+            <column column="STUDENTS.ID">division</column>
+            <column column="STUDENTS.ID">grade_level</column>
+            <column column="STUDENTS.ID">First_Name</column>
+            <column column="STUDENTS.ID">middle_name</column>
+            <column column="STUDENTS.ID">Last_Name</column>
+            <column column="STUDENTS.ID">allow_web_access</column>
+            <column column="STUDENTS.ID">enrollment_status</column>
+            <column column="STUDENTS.ID">Email_Address</column>
+            <column column="STUDENTS.ID">Password</column>
+            <column column="STUDENTS.ID">Org_Unit_Path</column>
+         </columns>
+        <!--SQL query in format <![CDATA[QUERY]]>-->
+        <sql>
+            <![CDATA[
+            select
+                students.dcid,
+                students.student_number,
+                students.districtentrydate as "District Entry Date",
+                decode(students.schoolid, 1, '1 ES', 10, '1 ES', 2, '2 MS', 3, '3 HS') as "Division",
+                students.grade_level as "Grade Level",
+                students.first_name as "First Name",
+                students.middle_name as "Middle Name",
+                students.last_name as "Last Name",
+                decode(students.student_allowwebaccess, 0, 'FALSE', 1, 'TRUE') as "Allow Web Access",
+                decode(students.enroll_status, -1, 'Pre-Enrolled', 0, 'Enrolled') as "Enrollment Status",
+                
+                /*
+                only suggest an email address for students that do not have one
+                */
+                case 
+                    when u_studentsuserfields.emailstudent is null
+                        then lower(substr(students.first_name, 1, 1))||lower(regexp_replace(students.last_name, '[^a-zA-Z]',''))||TO_CHAR(sysdate, 'YYYY')||'@ash.nl'
+                    else u_studentsuserfields.emailstudent
+                end as "Email Address",
+                
+                /*
+                only suggest password when there is no email address in the emailstudent field
+                */
+                case
+                    when u_studentsuserfields.emailstudent is null
+                        then lower(substr(students.first_name, 1, 3))||students.student_number||'ash' 
+                    else null
+                end as "Password",
+                        
+                case 
+                    when students.grade_level >= 9 then '/High School' 
+                    when students.grade_level < 9 and students.grade_level > 4 then '/Middle School'
+                    when students.grade_level < 5 then '/Elementary School'
+                    else ''
+                end
+                ||'/Grade '||
+                
+                case 
+                    when students.grade_level < 1 then decode(students.grade_level, 0, 'KG', -1, 'TK', -2, 'PS')
+                    else lpad(students.grade_level, 2, '0')
+                end
+                ||'/'||    
+                case 
+                    when (EXTRACT(month from sysdate) >= 1 and EXTRACT(month from sysdate) <= 6) 
+                        then extract(year from sysdate) + 12 - students.grade_level
+                    when (EXTRACT(month from sysdate) >= 7 and EXTRACT(month from sysdate) <= 12)
+                        then extract(year from sysdate) + 13 - students.grade_level
+                end
+                as  "Org Unit Path"
+                
+            from 
+                students students,
+                U_StudentsUserFields U_StudentsUserFields
+            where
+                STUDENTS.DCID=U_STUDENTSUSERFIELDS.STUDENTSDCID
+                and students.enroll_status in(-1,0)
+                /*
+                only pull students that do not have email addresses
+                */
+                and u_studentsuserfields.emailstudent is null
+                and (sysdate-15 <= students.districtentrydate and students.districtentrydate <= sysdate+30)
+            order by
+                "Division" asc,
+                students.districtentrydate asc
+                
+
+            ]]>
+        </sql>
+    </query>
+
+</queries>
