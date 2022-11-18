@@ -9,6 +9,7 @@ PowerSchool SIS generates reports on a schedule set in the Data Export Manager (
 Documents deposited on the SSH host are processed and forwarded on to the appropriate user groups with links to documentation and instructions particular to the document. All documents should only be mailed to google group addresses within the domain. Distribution lists are maintained exclusively through the google groups.
 
 Reports are produced through PowerSchool PowerQueries. For more information on updating and maintaining the PowerQuery reports see the [sis_automation README](./sis_automation/README.md) in this repository.
+
 ## Report setup
 
 Create a report using the Data Export Manager to choose using the appropriate `com.txoof.ashautomation` named query (NQ). When done make sure to save the template. 
@@ -132,6 +133,16 @@ The following dependencies are required on the SFTP server in a Debian based env
 
 * uuencode provided by [sharutils](https://packages.debian.org/bullseye/sharutils)
 
+
+## Report setup
+
+Report names need to be formatted as `destination_group-_-report_name.csv`. The `destination_group` must match a google group in the form of `destination_group_sis_reports@ash.nl`. The delimiter between the destination group and the report name must always be `-_-`. 
+## Email setup
+
+All outgoing emails will get `sis_textbody/default_body.txt` appended to the email.
+
+Specific text will be added to outgoing email. 
+
 ## TO DO
 
 - [x] Set up sismailer user on SSH host
@@ -139,9 +150,15 @@ The following dependencies are required on the SFTP server in a Debian based env
 - [ ] Document SSH configuration
 - [x] Add automation scripts to sismailer
 - [ ] Setup cron job for sis mailer
+<<<<<<< HEAD
 - [x] Write standard, individual text for mailer
 - [x] Set up Google groups
 - [ ] more robust parsing of the incoming report name delimiter using a regex
 - [ ] some sort of external monitoring
 - [ ] some sort of internal monitoring
 - [ ] clean up old reports in $report_archive on a regular basis
+=======
+- [ ] Write standard, individual text for mailer
+- [ ] Set up Google groups
+- [ ] more robust parsing of the incoming report name delimiter using a regex
+
